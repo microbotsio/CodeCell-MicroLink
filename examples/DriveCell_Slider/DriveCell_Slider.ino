@@ -7,7 +7,6 @@
  * Connect a DC motor to the DriveCell to vary its speed, or a magnetic actuator to vary its position.
  */
 
-
 #include <DriveCell.h>
 #include <CodeCell.h>
 #include "MicroLink.h"
@@ -22,10 +21,9 @@ DriveCell DriveCell2(IN2_pin1, IN2_pin2);
 CodeCell myCodeCell;
 MicroLink myMicroLink;
 
-float Roll, Pitch, Yaw;  // Variables to store rotation data
-
 bool polarity;
-char message[18];
+char myMessage[18];
+float Roll, Pitch, Yaw;  
 
 void setup() {
   Serial.begin(115200);  // Start the serial monitor at 115200 baud
@@ -55,8 +53,8 @@ void loop() {
       polarity = !polarity;
       myMicroLink.Print("Reversing Polarity");
       delay(1000);
-      sprintf(message, "Polarity set to: %u", polarity);
-      myMicroLink.Print(message);
+      sprintf(myMessage, "Polarity set to: %u", polarity);
+      myMicroLink.Print(myMessage);
       delay(1000);
     } else {
       //Get the Sliders values and output the new dutyclce
@@ -66,8 +64,8 @@ void loop() {
       DriveCell2.Drive(polarity, slider2);
 
       // Send a string message to the MicroLink app
-      sprintf(message, "D1: %u%% D2: %u%%", slider1, slider2);
-      myMicroLink.Print(message);
+      sprintf(myMessage, "D1: %u%% D2: %u%%", slider1, slider2);
+      myMicroLink.Print(myMessage);
     }
   }
 }
