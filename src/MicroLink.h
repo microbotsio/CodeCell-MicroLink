@@ -48,6 +48,7 @@ public:
 
 private:
   uint8_t _currentEnableMask = 0;
+  char *_mesage_last = nullptr;
   uint8_t _lastEnableMask = 0;
   void enableScreen(uint8_t bitMask);
 };
