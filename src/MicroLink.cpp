@@ -131,10 +131,14 @@ void MicroLink::ShowSensors(uint8_t battery_val, uint16_t proximity_val, float h
   }
 }
 
-void MicroLink::Print(char *xstring) {
-  size_t len = strlen(xstring);  // Get length of the string
-  pStringCharacteristic->setValue((uint8_t *)xstring, len);
-  pStringCharacteristic->notify();
+void MicroLink::Print(char *mesage) {
+  if ((_mesage_last == nullptr) || (strcmp(mesage, _mesage_last) != 0)) {
+    size_t len = strlen(mesage);
+    pStringCharacteristic->setValue((uint8_t *)mesage, len);
+    pStringCharacteristic->notify();
+
+    _mesage_last = strdup(mesage);
+  }
 }
 
 void MicroLink::enableScreen(uint8_t bitMask) {
