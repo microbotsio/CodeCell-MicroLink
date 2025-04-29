@@ -26,7 +26,7 @@ MicroLink myMicroLink;
 bool flap_polarity = false, flap_state = 1;            
 uint16_t flap_slider1 = 0, flap_slider2 = 0;  
 
-char myMessage[22];               
+char myMessage[20];               
 
 void setup() {
   Serial.begin(115200);  // Start the serial monitor for debugging
