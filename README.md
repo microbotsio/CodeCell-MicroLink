@@ -1,6 +1,6 @@
 # CodeCell MicroLink
 <img src="https://cdn.shopify.com/s/files/1/0766/9855/0605/files/microlink.png?v=1745929959" alt="CodeCell MicroLink" width="300" align="right" style="margin-left: 20px;">
-This library is made for the [CodeCell](https://microbots.io/codecell) module. It allows you to wirelessly connect your CodeCell to the **MicroLink mobile app**, enabling live interaction through sliders, buttons, joystick, and real-time sensory feedback — ideal for controlling tiny robots, diy sensor, or other interactive projects.
+This library is made for the [CodeCell](https://microbots.io/codecell) module. It allows you to wirelessly connect your CodeCell to the MicroLink mobile app, enabling live interaction through sliders, buttons, joystick, and real-time sensory feedback — ideal for controlling tiny robots, diy sensor, or other interactive projects.
 
 ## Features
 
