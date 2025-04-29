@@ -1,11 +1,10 @@
 /*
  * Overview:
  * This example demonstrates how to use CodeCell with the MicroLink library.
- * In this example, we initialize a MotorCell and use a slider on the MicroLink to control its speed.
+ * In this example, we initialize a MotorCell and use a slider on the MicroLink to varry its speed.
  * The RPM value is printed on the screen and a button is also used to reverse the motor.
  *
  */
-
 
 #include <MotorCell.h>
 #include <CodeCell.h>
@@ -50,10 +49,8 @@ void loop() {
       myMicroLink.Print(message);
       delay(1000);
     } else {
-      //Get the Sliders values and output the new dutyclce
-      uint16_t slider1 = (uint16_t)(myMicroLink.ReadSlider1())*300;
-      
-      uint16_t MotorRPM = myMotorCell.SpinPID(slider1); /* Set the target RPM to 15,000 using the PID controller */
+      //Get the Slider value and output the new dutyclce      
+      uint16_t MotorRPM = myMotorCell.Spin(myMicroLink.ReadSlider1()); /* Set the target RPM to 15,000 using the PID controller */
 
       // Send a string message to the MicroLink app
       sprintf(message, "%u RPM", MotorRPM);
