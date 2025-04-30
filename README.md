@@ -56,7 +56,7 @@ if (micro.ReadButtonA()) {
 
 The MicroLink app connects to CodeCell over Bluetooth, allowing you to view live data and link controls to actions through this library.
 
-The app is currently in beta and will be officially released on both Android and iOS soon. If you'd like to test it out before the launch, just reach out to us!
+The MicroLink app is currently available as a beta release on the Google Play Store and will launch on iOS on May 31st. It's completely free to use and features a clean, ad-free interface.
 
 ## License
 
