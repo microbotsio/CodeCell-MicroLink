@@ -4,12 +4,16 @@
  * In this example, we initialize a MotorCell and use a slider on the MicroLink to varry its speed.
  * The RPM value is printed on the screen and a button is also used to reverse the motor.
  *
+ * Controls:
+ * Slider 1 - Controls the speed of the MotorCell
+ * Button A - Change spin direction
  */
 
 #include <MotorCell.h>
 #include <CodeCell.h>
 #include "MicroLink.h"
 
+// Define the pins connected to the two DriveCells
 #define IN_pin1 2
 #define OUT_pin2 3
 #define FR_pin2 1
@@ -30,7 +34,8 @@ void setup() {
   // Initialize the MicroLink Bluetooth connection using
   myMicroLink.Init();
 
-  myMotorCell.Init(); /* Initialize the MotorCell */
+// Initialize the MotorCell 
+  myMotorCell.Init(); 
 }
 
 void loop() {
@@ -43,7 +48,7 @@ void loop() {
       //Flip driving polairty
       polarity = !polarity;
       myMotorCell.ReverseSpin();
-      myMicroLink.Print("Reversing Polarity");
+      myMicroLink.Print("Reversing");
       delay(1000);
       sprintf(message, "Polarity set to: %u", polarity);
       myMicroLink.Print(message);
