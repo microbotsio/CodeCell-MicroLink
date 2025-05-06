@@ -14,9 +14,9 @@
  * Button D - Flips the magnetic polarity (only in PWM mode)
  */
 
-#include <DriveCell.h>  // Library for controlling DriveCell modules
-#include <CodeCell.h>   // Library for interacting with CodeCell (sensors, power)
-#include "MicroLink.h"  // MicroLink Bluetooth communication library
+#include <DriveCell.h>  
+#include <CodeCell.h>  
+#include "MicroLink.h" 
 
 // Define the pins connected to the two DriveCells
 #define IN1_pin1 2
