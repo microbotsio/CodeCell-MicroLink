@@ -4,6 +4,10 @@
  * In this example, we use the CodeCell's motion sensor to print the step counts on the MicroLink app screen. 
  * We also use the buttons to reset the step counts, guess your personal activity and control the onboard LED.
  *
+ * Controls:
+ * Button A - Press to turn on/off the onboard LED
+ * Button B - Press to reset the step counts
+ * Button C - Press to guess activity
  */
 
 
@@ -72,7 +76,7 @@ void loop() {
       if (myMicroLink.ReadButtonB()) {
         step_zero = step_counter + step_zero;
       }
-      if (myMicroLink.ReadButtonD()) {
+      if (myMicroLink.ReadButtonA()) {
         //Change LED Brightness
         brightness = !brightness;
         if (brightness) {
