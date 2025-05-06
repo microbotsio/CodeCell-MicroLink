@@ -1,16 +1,22 @@
 /*
  * Overview:
  * This example demonstrates how to use CodeCell with the MicroLink library.
- * In this example, we initialize two DriveCells and use two sliders on the MicroLink to control their duty cycle. 
- * A button is also used to flip the driving polarity.
+ * In this example, we initialize two DriveCells and use two sliders on the MicroLink to control their  
+ * PWM duty cycle. A button is also used to flip the driving polarity.
  * 
  * Connect a DC motor to the DriveCell to vary its speed, or a magnetic actuator to vary its position.
+ *
+ * Controls:
+ * Slider 1 - Controls the PWM duty cycle of the first DriveCell
+ * Slider 2 - Controls the PWM duty cycle of the second DriveCell
+ * Button A - Flips the magnetic polarity 
  */
 
 #include <DriveCell.h>
 #include <CodeCell.h>
 #include "MicroLink.h"
 
+// Define the pins connected to the two DriveCells
 #define IN1_pin1 2
 #define IN1_pin2 3
 #define IN2_pin1 5
@@ -23,7 +29,7 @@ MicroLink myMicroLink;
 
 bool polarity;
 char myMessage[18];
-float Roll, Pitch, Yaw;  
+float Roll, Pitch, Yaw;
 
 void setup() {
   Serial.begin(115200);  // Start the serial monitor at 115200 baud
