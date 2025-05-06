@@ -1,15 +1,24 @@
 /*
  * Overview:
  * This example demonstrates how to use CodeCell with the MicroLink library.
- * In this example, we initialize two DriveCells driving two FlatFlaps and use two sliders on the MicroLink to control their duty cycle and speed. 
- * The buttons are also used to flip between different modes: angle control, speed control, buzzing and flipping the polarity
+ * It initializes two DriveCells driving two FlatFlaps and uses two sliders and buttons 
+ * in the MicroLink app to control magnetic actuators. We also combine the onboard proximity 
+ * sensor's reading to adjust the duty cycle (only in PWM mode) make the actuator interactive.
+ *
+ * Controls:
+ * Slider 1 - Controls the PWM duty cycle or frequency of the first FlatFlap
+ * Slider 2 - Controls the PWM duty cycle or frequency of the second FlatFlap
+ * Button A - PWM Mode: Vary the angle of the FlatFlap by adjusting the PWM duty cycle
+ * Button B - Speed Mode: Vary the speed of the FlatFlap by adjusting the PWM frequency
+ * Button C - Plays a buzzing tone on both FlatFlaps when pressed
+ * Button D - Flips the magnetic polarity (only in PWM mode)
  */
 
-#include <DriveCell.h>     // Include the library for controlling DriveCell modules
-#include <CodeCell.h>      // Include the library for interacting with CodeCell
-#include "MicroLink.h"     // Include the MicroLink library for Bluetooth communication
+#include <DriveCell.h>  // Library for controlling DriveCell modules
+#include <CodeCell.h>   // Library for interacting with CodeCell (sensors, power)
+#include "MicroLink.h"  // MicroLink Bluetooth communication library
 
-// Define the pins connected to the DriveCell modules
+// Define the pins connected to the two DriveCells
 #define IN1_pin1 2
 #define IN1_pin2 3
 #define IN2_pin1 5
@@ -19,108 +28,125 @@ DriveCell FlatFlap1(IN1_pin1, IN1_pin2);
 DriveCell FlatFlap2(IN2_pin1, IN2_pin2);
 
 CodeCell myCodeCell;
-
 MicroLink myMicroLink;
 
 // State and data variables
-bool flap_polarity = false, flap_state = 1;            
-uint16_t flap_slider1 = 0, flap_slider2 = 0;  
+bool flap_polarity = false;
+bool flap_state = 0;  // 0 = speed control, 1 = PWM control
+uint16_t flap_slider1 = 100, flap_slider2 = 100;
 
-char myMessage[20];               
+char myMessage[20];
 
 void setup() {
-  Serial.begin(115200);  // Start the serial monitor for debugging
+  Serial.begin(115200);  // Start serial monitor for debugging
 
-  // Initialize the CodeCell with both light and motion rotation sensors
+  // Initialize CodeCell with both light and rotation sensors
   myCodeCell.Init(LIGHT + MOTION_ROTATION);
 
-  // Start the MicroLink Bluetooth communication
+  // Start Bluetooth communication with the MicroLink app
   myMicroLink.Init();
 
-  // Initialize both DriveCells connected to the FlatFlaps
+  // Initialize both DriveCells controlling the FlatFlaps
   FlatFlap1.Init();
   FlatFlap2.Init();
 }
 
 void loop() {
+  if (myCodeCell.Run(10)) {  // Run CodeCell update loop at 10Hz
 
-  if (myCodeCell.Run(10)) {  // Run CodeCell update loop every 10Hz
-    
-    // Read light sensor proximity and normalize the value
+    // Read light proximity sensor and normalize the value
     uint16_t proximity = myCodeCell.Light_ProximityRead();
-    proximity = proximity / 20;      // Scale it down
-    if (proximity > 100) proximity = 100;
+    proximity = proximity / 20;
+    if (proximity > 100) {
+      proximity = 100;
+    }
 
-    // Send sensor data (battery and proximity) to the MicroLink app
+    // Send battery level and proximity data to the MicroLink app
     myMicroLink.ShowSensors(myCodeCell.BatteryLevelRead(), proximity, 0);
 
-    // Read the values from the two sliders in the app
+    // Read slider values from the MicroLink app
     flap_slider1 = myMicroLink.ReadSlider1();
     flap_slider2 = myMicroLink.ReadSlider2();
 
-    // Check if Button A was pressed - switch to angle control mode
     if (myMicroLink.ReadButtonA()) {
+      // Switch to PWM (angle control) mode
       flap_state = 1;
-      myMicroLink.Print("Flap Angle Control");
+      myMicroLink.Print("PWM Control");
       delay(1000);
-
-    // Check if Button B was pressed - switch to speed control mode
     } else if (myMicroLink.ReadButtonB()) {
+      // Switch to frequency (speed control) mode
       flap_state = 0;
-      myMicroLink.Print("Flap Speed Control");
+      myMicroLink.Print("Speed Control");
       delay(1000);
-
-    // Check if Button C was pressed - activate buzzing on both flaps
     } else if (myMicroLink.ReadButtonC()) {
+      // Play buzzing tone on both FlatFlaps
+      myMicroLink.Print("Buzzing");
       FlatFlap1.Tone();
       FlatFlap2.Tone();
-      myMicroLink.Print("Flap Buzzing");
-
-    // Check if Button D was pressed - reverse driving polarity
+      delay(100);
     } else if (myMicroLink.ReadButtonD()) {
-      flap_polarity = !flap_polarity;  // Flip polarity boolean
+      // Flip magnetic polarity in PWM mode
+      flap_polarity = !flap_polarity;
       myMicroLink.Print("Reversing Polarity");
 
-      // Stop both motors briefly
+      // Briefly stop both drivers before applying new polarity
       FlatFlap1.Drive(flap_polarity, 0);
       FlatFlap2.Drive(flap_polarity, 0);
       delay(1000);
 
-      // Show updated polarity state
+      // Display new polarity state
       sprintf(myMessage, "Polarity set to: %u", flap_polarity);
       myMicroLink.Print(myMessage);
       delay(1000);
-
     } else {
-      // If no button is pressed, act based on current flap_state
-
-      // -------- ANGLE CONTROL MODE --------
       if (flap_state == 1) {
-        // Reduce slider values by proximity to account for hand distance
-        flap_slider2 = (flap_slider2 > proximity) ? flap_slider2 - proximity : 0;
-        flap_slider1 = (flap_slider1 > proximity) ? flap_slider1 - proximity : 0;
+        // PWM Mode: Adjust duty cycle based on proximity and sliders
+        if (flap_slider2 > proximity) {
+          flap_slider2 = flap_slider2 - proximity;
+        } else {
+          flap_slider2 = 0;
+        }
 
-        // Send PWM drive signals to each FlatFlap
+        if (flap_slider1 > proximity) {
+          flap_slider1 = flap_slider1 - proximity;
+        } else {
+          flap_slider1 = 0;
+        }
+
+        // Apply PWM drive signals
         FlatFlap1.Drive(flap_polarity, flap_slider1);
         FlatFlap2.Drive(flap_polarity, flap_slider2);
 
-        // Display duty cycle percentage on the MicroLink app
+        // Display duty cycle percentages
         sprintf(myMessage, "D1: %u%% D2: %u%%", flap_slider1, flap_slider2);
         myMicroLink.Print(myMessage);
 
-      // -------- SPEED CONTROL MODE --------
       } else if (flap_state == 0) {
-        // Multiply slider value by 10 to convert to milliseconds
-        flap_slider1 = flap_slider1 * 10;
-        flap_slider2 = flap_slider2 * 10;
+        // Speed Mode: Interpret sliders as frequencies
+        flap_slider1 = flap_slider1 / 4;
+        flap_slider2 = flap_slider2 / 4;
 
-        // Run flaps in time-based speed mode
-        FlatFlap1.Run(true, 100, flap_slider1);
-        FlatFlap2.Run(true, 100, flap_slider2);
-
-        // Show timing values in the app
-        sprintf(myMessage, "S1: %ums S2: %ums", flap_slider1, flap_slider2);
+        // Show frequencies on MicroLink app
+        sprintf(myMessage, "F1: %uHz F2: %uHz", flap_slider1, flap_slider2);
         myMicroLink.Print(myMessage);
+
+        // Apply frequency control to FlatFlap1
+        if (flap_slider1 != 0) {
+          double f1 = 1 / (double)flap_slider1;
+          flap_slider1 = (uint16_t)(f1 * 1000);
+          FlatFlap1.Run(flap_slider1 > 100, 100, flap_slider1);
+        } else {
+          FlatFlap1.Run(false, 0, 0);
+        }
+
+        // Apply frequency control to FlatFlap2
+        if (flap_slider2 != 0) {
+          double f2 = 1 / (double)flap_slider2;
+          flap_slider2 = (uint16_t)(f2 * 1000);
+          FlatFlap2.Run(flap_slider2 > 100, 100, flap_slider2);
+        } else {
+          FlatFlap2.Run(false, 0, 0);
+        }
       }
     }
   }
