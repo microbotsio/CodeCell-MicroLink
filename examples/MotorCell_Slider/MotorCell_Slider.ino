@@ -55,7 +55,7 @@ void loop() {
       delay(1000);
     } else {
       //Get the Slider value and output the new dutyclce      
-      uint16_t MotorRPM = myMotorCell.Spin(myMicroLink.ReadSlider1()); /* Set the target RPM to 15,000 using the PID controller */
+      uint16_t MotorRPM = myMotorCell.Spin(myMicroLink.ReadSlider1()); 
 
       // Send a string message to the MicroLink app
       sprintf(message, "%u RPM", MotorRPM);
