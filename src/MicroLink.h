@@ -45,6 +45,7 @@ public:
   uint8_t ReadSlider3();
   uint8_t ReadJoystickX();
   uint8_t ReadJoystickY();
+  bool ReadConnect();
 
 private:
   uint8_t _currentEnableMask = 0;
@@ -54,3 +55,4 @@ private:
 };
 
 #endif
+
