@@ -39,13 +39,13 @@ public:
   bool ReadButtonB();
   bool ReadButtonC();
   bool ReadButtonD();
+  bool ReadConnect();
   bool ReadButtonJoystick();
   uint8_t ReadSlider1();
   uint8_t ReadSlider2();
   uint8_t ReadSlider3();
   uint8_t ReadJoystickX();
   uint8_t ReadJoystickY();
-  bool ReadConnect();
 
 private:
   uint8_t _currentEnableMask = 0;
@@ -55,4 +55,5 @@ private:
 };
 
 #endif
+
 
