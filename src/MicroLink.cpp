@@ -190,3 +190,7 @@ bool MicroLink::ReadButtonJoystick() {
   enableScreen(EN_JOYSTICK);
   return ButtonJoystick;
 }
+bool MicroLink::ReadConnect() {
+  return isAppConnectionReady;
+}
+
